@@ -1,96 +1,113 @@
+import 'dart:math';
+
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const BallPage());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BallPage extends StatelessWidget {
+  const BallPage({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      home: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 227, 177, 235),
+        appBar: AppBar(
+          backgroundColor: Colors.purple,
+          title: const Center(
+            child: Text('Ask Me Anything'),
+          ),
+        ),
+        body: const Ball(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+class Ball extends StatefulWidget {
+  const Ball({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Ball> createState() => _BallState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _BallState extends State<Ball> {
+  int ballNumber = 0;
+  String text = '';
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  // random generate ball number and show the tally text
+  void randomBallNumber() {
+    ballNumber = Random().nextInt(5) + 1;
+    if (ballNumber == 1) {
+      text = 'Yes';
+    } else if (ballNumber == 2) {
+      text = 'No';
+    } else if (ballNumber == 3) {
+      text = 'Ask Again Later';
+    } else if (ballNumber == 4) {
+      text = 'The Answer is Yes';
+    } else if (ballNumber == 5) {
+      text = 'I have no idea';
+    }
+  }
+
+  @override
+  // set initial images to ball1
+  void initState() {
+    ballNumber = 1;
+    text = 'Yes';
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+    String combineText = 'Ball Number $ballNumber : ${text.toUpperCase()}';
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AnimatedTextKit(
+          pause: const Duration(milliseconds: 4000),
+          repeatForever: true,
+          animatedTexts: [
+            TyperAnimatedText(
+              'Click Image for more result',
+              textStyle: const TextStyle(
+                color: Colors.purple,
+                fontFamily: 'Alkatra',
+                fontSize: 18,
+              ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  randomBallNumber();
+                });
+                print('Ball Number: $ballNumber');
+              },
+              child: Image.asset(
+                'assets/ball$ballNumber.png',
+              ),
+            ),
+          ),
+        ),
+        Text(
+          combineText,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        )
+      ],
     );
   }
 }
